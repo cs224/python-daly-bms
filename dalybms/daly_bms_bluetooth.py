@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import asyncio
 import subprocess
 import logging
@@ -29,7 +30,7 @@ class DalyBMSBluetooth(DalyBMS):
         """
         try:
             """
-            When an earlier execution of the script crashed, the connection to the devices stays open and future 
+            When an earlier execution of the script crashed, the connection to the devices stays open and future
             connection attempts would fail with this error:
             bleak.exc.BleakError: Device with address AA:BB:CC:DD:EE:FF was not found.
             see https://github.com/hbldh/bleak/issues/367
@@ -55,7 +56,7 @@ class DalyBMSBluetooth(DalyBMS):
 
     async def _read_request(self, command, max_responses=1):
         response_data = None
-        x = None
+        x = 0
         for x in range(0, self.request_retries):
             response_data = await self._read(
                 command=command,
@@ -179,7 +180,7 @@ class DalyBMSBluetooth(DalyBMS):
         return {
             "soc": await self.get_soc(),
             "cell_voltage_range": await self.get_cell_voltage_range(),
-            "temperature_range": await self.get_temperature_range(),
+            "temperature_range": await self.get_max_min_temperature(),
             "mosfet_status": await self.get_mosfet_status(),
             "status": await self.get_status(),
             "cell_voltages": await self.get_cell_voltages(),
