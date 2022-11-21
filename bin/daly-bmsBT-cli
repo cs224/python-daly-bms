@@ -87,7 +87,7 @@ class DalyBMSConnection():
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--device",
                     help="MAC address, e.g. 88:99:AA:BB:CC",
-                    type=str, required=True)
+                    type=str)
 parser.add_argument("--status", help="show status", action="store_true")
 parser.add_argument("--soc", help="show voltage, current, SOC", action="store_true")
 parser.add_argument("--mosfet", help="show mosfet status", action="store_true")
@@ -154,7 +154,7 @@ if args.daemon:
     # If config file specified, process
 if args.configfile:
     import configparser
-    log.debug(f"args.configfile is true: {args.configfile}")
+    logger.debug(f"args.configfile is true: {args.configfile}")
     config = configparser.ConfigParser()
     try:
         config.read(args.configfile)
@@ -170,11 +170,11 @@ if args.configfile:
     # Process setup section
     pause = config["SETUP"].getint("pause", fallback=60)
     # Overide mqtt_broker settings
-    mqtt_broker.update(args.mqtt, config["SETUP"].get("mqtt", fallback=False))
-    mqtt_broker.update(args.mqtt_broker, config["SETUP"].get("mqtt-broker", fallback=None))
-    mqtt_broker.update(args.mqtt_port, config["SETUP"].getint("mqtt-port", fallback=None))
-    mqtt_broker.update(args.mqtt_user, config["SETUP"].get("mqtt-user", fallback=None))
-    mqtt_broker.update(args.mqtt_password, config["SETUP"].get("mqtt-password", fallback=None))
+    args.mqtt =  config["SETUP"].get("mqtt", fallback=False)
+    args.mqtt_broker = config["SETUP"].get("mqtt-broker", fallback=None)
+    args.mqtt_port = config["SETUP"].getint("mqtt-port", fallback=None)
+    args.mqtt_user = config["SETUP"].get("mqtt-user", fallback=None)
+    args.mqtt_password = config["SETUP"].get("mqtt-password", fallback=None)
     sections.remove("SETUP")
 
     args.device = config["DALYBTBMS"].get("device", fallback=None)
