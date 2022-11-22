@@ -170,11 +170,12 @@ if args.configfile:
     # Process setup section
     pause = config["SETUP"].getint("pause", fallback=60)
     # Overide mqtt_broker settings
-    args.mqtt =  config["SETUP"].get("mqtt", fallback=False)
-    args.mqtt_broker = config["SETUP"].get("mqtt-broker", fallback=None)
-    args.mqtt_port = config["SETUP"].getint("mqtt-port", fallback=None)
-    args.mqtt_user = config["SETUP"].get("mqtt-user", fallback=None)
-    args.mqtt_password = config["SETUP"].get("mqtt-password", fallback=None)
+    args.mqtt =  config["SETUP"].get("mqtt", fallback=args.mqtt)
+    args.mqtt_hass = config["SETUP"].get("mqtt-hass", fallback=args.mqtt_hass)
+    args.mqtt_broker = config["SETUP"].get("mqtt-broker", fallback=args.mqtt_broker)
+    args.mqtt_port = config["SETUP"].getint("mqtt-port", fallback=args.mqtt_port)
+    args.mqtt_user = config["SETUP"].get("mqtt-user", fallback=args.mqtt_user)
+    args.mqtt_password = config["SETUP"].get("mqtt-password", fallback=args.mqtt_password)
     sections.remove("SETUP")
 
     args.device = config["DALYBTBMS"].get("device", fallback=None)
@@ -192,7 +193,7 @@ if args.mqtt:
     mqtt_client.enable_logger(logger)
     mqtt_client.username_pw_set(args.mqtt_user, args.mqtt_password)
     mqtt_client.connect(args.mqtt_broker, port=args.mqtt_port)
-
+    mqtt_client.loop_start()
 
 def build_mqtt_hass_config_discovery(base):
     # Instead of daly_bms should be here added a proper name (unique), like serial or something
@@ -237,7 +238,6 @@ def build_mqtt_hass_config_discovery(base):
 def mqtt_single_out(topic, data, retain=False):
     logger.debug(f'Send data: {data} on topic: {topic}, retain flag: {retain}')
     mqtt_client.publish(topic, data, retain=retain)
-
 
 def mqtt_iterator(result, base=''):
     for key in result.keys():
