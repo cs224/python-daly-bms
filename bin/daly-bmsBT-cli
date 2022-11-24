@@ -127,7 +127,8 @@ parser.add_argument("-C","--configfile",
                     help="Full location of config file (default None, /etc/dalybt.conf if -C supplied)",
                     const="/etc/dalybt.conf",
                     default=None,)
-parser.add_argument("--daemon", action="store_true", help="Run as daemon")
+parser.add_argument("--daemon", action="store_true", help="Run as daemon",default=False)
+parser.add_argument("--daemon-pause", type=int, help="Sleep time for daemon",default=60)
 args = parser.parse_args()
 
 log_format = '%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
@@ -140,16 +141,6 @@ logging.basicConfig(level=level, format=log_format, datefmt='%H:%M:%S')
 
 logger = logging.getLogger()
 #print (logger)
-
-# Initialize Daemon
-if args.daemon:
-    import time
-    import systemd.daemon
-
-    # Tell systemd that our service is ready
-    systemd.daemon.notify("READY=1")
-    print("Service Initializing ...")
-    pause = 60
 
     # If config file specified, process
 if args.configfile:
@@ -168,10 +159,10 @@ if args.configfile:
         log.error(f"Config File '{args.configfile}' is missing the required 'SETUP' section")
         exit(1)
     # Process setup section
-    pause = config["SETUP"].getint("pause", fallback=60)
+    args.daemon_pause = config["SETUP"].getint("daemon-pause", fallback=60)
     # Overide mqtt_broker settings
-    args.mqtt =  config["SETUP"].get("mqtt", fallback=args.mqtt)
-    args.mqtt_hass = config["SETUP"].get("mqtt-hass", fallback=args.mqtt_hass)
+    args.mqtt =  config["SETUP"].getboolean("mqtt", fallback=args.mqtt)
+    args.mqtt_hass = config["SETUP"].getboolean("mqtt-hass", fallback=args.mqtt_hass)
     args.mqtt_broker = config["SETUP"].get("mqtt-broker", fallback=args.mqtt_broker)
     args.mqtt_port = config["SETUP"].getint("mqtt-port", fallback=args.mqtt_port)
     args.mqtt_user = config["SETUP"].get("mqtt-user", fallback=args.mqtt_user)
@@ -180,11 +171,12 @@ if args.configfile:
 
     args.device = config["DALYBTBMS"].get("device", fallback=None)
 
+#print(args)
+
 bms = DalyBMSConnection(mac_address=args.device,request_retries=3, logger=logger )
 #asyncio.run(bms.connect())
 
 result = False
-
 mqtt_client = None
 if args.mqtt:
     import paho.mqtt.client as paho
@@ -264,52 +256,72 @@ def print_result(result):
         print(json.dumps(result, indent=2))
 
 
-if args.status:
-    result = asyncio.run(bms.get_status())
-    print_result(result)
-if args.soc:
-    result = asyncio.run(bms.get_soc())
-    print_result(result)
-if args.mosfet:
-    result = asyncio.run(bms.get_mosfet_status())
-    print_result(result)
-if args.cell_voltages:
-    if not args.status:
-        bms.get_status()
-    result = asyncio.run(bms.get_cell_voltages())
-    print_result(result)
-if args.temperatures:
-    result = asyncio.run(bms.get_temperatures())
-    print_result(result)
-if args.balancing:
-    result = asyncio.run(bms.get_balancing_status())
-    print_result(result)
-if args.errors:
-    result = asyncio.run(bms.get_errors())
-    print_result(result)
-if args.all:
-    result = asyncio.run(bms.get_all())
-    print_result(result)
+# Initialize Daemon
+if args.daemon:
+    import time
+    import systemd.daemon
 
-if args.check:
-    status = asyncio.run(bms.get_status())
-    status_code = 0  # OK
-    status_codes = ('OK', 'WARNING', 'CRITICAL', 'UNKNOWN')
-    status_line = ''
+    # Tell systemd that our service is ready
+    systemd.daemon.notify(systemd.daemon.Notification.READY)
 
-    data = asyncio.run(bms.get_soc())
-    perfdata = []
-    if data:
-        for key, value in data.items():
-            perfdata.append('%s=%s' % (key, value))
 
-    # todo: read errors
+while True:
+    if args.status:
+        result = asyncio.run(bms.get_status())
+        print_result(result)
+    if args.soc:
+        result = asyncio.run(bms.get_soc())
+        print_result(result)
+    if args.mosfet:
+        result = asyncio.run(bms.get_mosfet_status())
+        print_result(result)
+    if args.cell_voltages:
+        if not args.status:
+            asyncio.run(bms.get_status())
+            result = asyncio.run(bms.get_cell_voltages())
+            print_result(result)
+    if args.temperatures:
+        result = asyncio.run(bms.get_temperatures())
+        print_result(result)
+    if args.balancing:
+        result = asyncio.run(bms.get_balancing_status())
+        print_result(result)
+    if args.errors:
+        result = asyncio.run(bms.get_errors())
+        print_result(result)
+    if args.all:
+        result = asyncio.run(bms.get_all())
+        print_result(result)
 
-    if status_code == 0:
-        status_line = '%0.1f volt, %0.1f amper' % (data['total_voltage'], data['current'])
+    if args.check:
+        status = asyncio.run(bms.get_status())
+        status_code = 0  # OK
+        status_codes = ('OK', 'WARNING', 'CRITICAL', 'UNKNOWN')
+        status_line = ''
 
-    print("%s - %s | %s" % (status_codes[status_code], status_line, " ".join(perfdata)))
-    sys.exit(status_code)
+        data = asyncio.run(bms.get_soc())
+        perfdata = []
+        if data:
+            for key, value in data.items():
+                perfdata.append('%s=%s' % (key, value))
+
+                # todo: read errors
+
+                if status_code == 0:
+                    status_line = '%0.1f volt, %0.1f amper' % (data['total_voltage'], data['current'])
+
+                    print("%s - %s | %s" % (status_codes[status_code], status_line, " ".join(perfdata)))
+                    sys.exit(status_code)
+    if args.set_discharge_mosfet:
+        break #setting mosfets not part of the daemon loop
+    if args.daemon:
+        systemd.daemon.notify(systemd.daemon.Notification.WATCHDOG)
+        print(f"Sleeping for {args.daemon_pause} sec")
+        time.sleep(args.daemon_pause)
+    else:
+        logger.debug("Once off command, not looping")
+        break
+
 
 if args.set_discharge_mosfet:
     if args.set_discharge_mosfet == 'on':
@@ -320,12 +332,16 @@ if args.set_discharge_mosfet:
         print("invalid value '%s', expected 'on' or 'off'" % args.set_discharge_mosfet)
         sys.exit(1)
 
-    result = bms.set_discharge_mosfet(on=on)
+        result = asyncio.run(bms.set_discharge_mosfet(on=on))
 
 if mqtt_client:
     mqtt_client.disconnect()
+    mqtt_client.loop_stop()
 
 asyncio.run(bms.disconnect())
 
 if not result:
     sys.exit(1)
+
+if args.daemon:
+    systemd.daemon.notify(systemd.daemon.Notification.STOPPING)
