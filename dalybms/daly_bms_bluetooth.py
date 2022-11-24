@@ -35,10 +35,13 @@ class DalyBMSBluetooth(DalyBMS):
             bleak.exc.BleakError: Device with address AA:BB:CC:DD:EE:FF was not found.
             see https://github.com/hbldh/bleak/issues/367
             """
+            out = subprocess.check_output("rfkill unblock bluetooth", shell = True)
             open_blue = subprocess.Popen(["bluetoothctl"], shell=True, stdout=subprocess.PIPE,
                                          stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
             open_blue.communicate(b"disconnect %s\n" % mac_address.encode('utf-8'))
             open_blue.kill()
+
+
         except:
             pass
         self.client = BleakClient(mac_address)
