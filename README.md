@@ -220,3 +220,14 @@ This is the command to populate your homeassistant, you should setup a systemd s
 ```
 ./daly-bmsBT-cli --all --mqtt --mqtt-hass --mqtt-user yourrmqttuser --mqtt-password yourmqttpassword --mqtt-broker 192.168.2.21 -d 02:11:23:34:7D:88
 ```
+Setting up the bluetooth as a systemd Service
+```
+pi@pizero:~/python-daly-bms $  sudo cp service/dalybt.service /etc/systemd/system/
+pi@pizero:~/python-daly-bms $ sudo cp service/dalybt.conf /etc/
+```
+Now edit the options to setup your mqtt server in the /etc/dalybt.conf filename
+```
+sudo systemctl start dalybt
+sudo systemctl enable dalybt
+```
+Your system should now automatically start the service when booting
