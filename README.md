@@ -9,6 +9,8 @@ Integrated changes from:
   * Pull request: https://github.com/KevinEeckman/python-daly-bms/pull/1
 
 
+## Quick Command
+
     BMS:
     > daly-bmsBT-cli --all -d C7:7C:03:01:06:71
     Balancer:
