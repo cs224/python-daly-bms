@@ -15,13 +15,12 @@ class DalyBMSConnection():
     async def connect(self):
         self.connected = await self.bt_bms.connect(mac_address=self.mac_address)
 
-    async def update_cell_voltages(self):
+    async def get_cell_voltages(self):
         if not self.connected:
            await self.connect()
         return self.bt_bms.get_cell_voltages()
 
-
-    async def update_cell_voltage_range(self):
+    async def get_cell_voltage_range(self):
         if not self.connected:
            await self.connect()
         return await self.bt_bms.get_cell_voltage_range()
@@ -41,17 +40,17 @@ class DalyBMSConnection():
            await self.connect()
         return await self.bt_bms.get_soc()
 
-    async def get_mosfet(self):
+    async def get_mosfet_status(self):
         if not self.connected:
            await self.connect()
         return await self.bt_bms.get_mosfet_status()
 
-    async def get_temps(self):
+    async def get_temperatures(self):
         if not self.connected:
            await self.connect()
         return await self.bt_bms.get_temperatures()
 
-    async def get_bal(self):
+    async def get_balancing_status(self):
         if not self.connected:
            await self.connect()
         return await self.bt_bms.get_balancing_status()
@@ -150,13 +149,13 @@ if args.configfile:
     try:
         config.read(args.configfile)
     except configparser.DuplicateSectionError as e:
-        log.error(f"Config File '{args.configfile}' has duplicate sections")
-        log.error(e)
+        logger.error(f"Config File '{args.configfile}' has duplicate sections")
+        logger.error(e)
         exit(1)
     sections = config.sections()
     # Check setup section exists
     if "SETUP" not in config:
-        log.error(f"Config File '{args.configfile}' is missing the required 'SETUP' section")
+        logger.error(f"Config File '{args.configfile}' is missing the required 'SETUP' section")
         exit(1)
     # Process setup section
     args.daemon_pause = config["SETUP"].getint("daemon-pause", fallback=60)

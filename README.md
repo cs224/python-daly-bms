@@ -1,5 +1,19 @@
 This is a Python module for reading data from Daly BMS devices. It supports serial as well as Bluetooth connections. Not all commands that the BMS supports are implemented yet, please take a look at the examples below to see if it serves your needs.
 
+Forked from: https://github.com/dreadnought/python-daly-bms
+
+Integrated changes from:
+* https://github.com/KevinEeckman/python-daly-bms
+  * Pull request: https://github.com/dreadnought/python-daly-bms/pull/29
+* https://github.com/tomatensaus/python-daly-bms
+  * Pull request: https://github.com/KevinEeckman/python-daly-bms/pull/1
+
+
+    BMS:
+    > daly-bmsBT-cli --all -d C7:7C:03:01:06:71
+    Balancer:
+    > daly-bmsBT-cli --all -d C7:7C:03:04:0F:D9
+
 ## Compatibility
 
 There are two different types of devices sold under the Daly Brand, which use different communication protocols.
@@ -23,7 +37,7 @@ pip3 install dalybms
 ### From Git
 
 ```
-git clone https://github.com/dreadnought/python-daly-bms.git
+git clone https://github.com/cs224/python-daly-bms.git
 cd python-daly-bms
 sudo python3 setup.py install
 ```
