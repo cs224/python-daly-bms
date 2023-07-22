@@ -18,7 +18,7 @@ class DalyBMSConnection():
     async def get_cell_voltages(self):
         if not self.connected:
            await self.connect()
-        return self.bt_bms.get_cell_voltages()
+        return await self.bt_bms.get_cell_voltages()
 
     async def get_cell_voltage_range(self):
         if not self.connected:
@@ -30,7 +30,7 @@ class DalyBMSConnection():
            await self.connect()
         return await self.bt_bms.get_status()
 
-    async def get_temps2(self):
+    async def get_max_min_temperature(self):
         if not self.connected:
            await self.connect()
         return await self.bt_bms.get_max_min_temperature()
