@@ -260,10 +260,12 @@ def print_result(result):
 # Initialize Daemon
 if args.daemon:
     import time
-    import systemd.daemon
+    # import systemd.daemon
+    import cysystemd
+    import cysystemd.daemon
 
     # Tell systemd that our service is ready
-    systemd.daemon.notify(systemd.daemon.Notification.READY)
+    cysystemd.daemon.notify(cysystemd.daemon.Notification.READY)
 
 
 while True:
@@ -326,7 +328,7 @@ while True:
     if args.set_discharge_mosfet:
         break #setting mosfets not part of the daemon loop
     if args.daemon:
-        systemd.daemon.notify(systemd.daemon.Notification.WATCHDOG)
+        cysystemd.daemon.notify(cysystemd.daemon.Notification.WATCHDOG)
         print(f"Sleeping for {args.daemon_pause} sec")
         time.sleep(args.daemon_pause)
     else:
@@ -355,4 +357,4 @@ if not result:
     sys.exit(1)
 
 if args.daemon:
-    systemd.daemon.notify(systemd.daemon.Notification.STOPPING)
+    cysystemd.daemon.notify(cysystemd.daemon.Notification.STOPPING)

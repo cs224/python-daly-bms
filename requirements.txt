@@ -2,3 +2,16 @@ pyserial==3.5
 # bleak==0.11.0
 bleak
 pytest
+paho-mqtt
+# apt install build-essential libsystemd-dev
+cysystemd
+# sdnotify
+# systemd-python @ git+https://github.com/systemd/python-systemd.git@main
+# systemd
+# https://stackoverflow.com/questions/13069634/python-daemon-and-systemd-service
+# https://github.com/systemd/python-systemd#installation
+# apt install libsystemd-{journal,daemon,login,id128}-dev gcc python3-dev pkg-config
+# apt install libsystemd-dev python3-systemd
+# pip3 install 'git+https://github.com/systemd/python-systemd.git#egg=systemd-python'
+# https://github.com/bb4242/sdnotify
+# https://github.com/shyaminayesh/ddnsc/issues/7
