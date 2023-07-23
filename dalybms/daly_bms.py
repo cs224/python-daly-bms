@@ -297,12 +297,13 @@ class DalyBMS:
         max_value = max(values)
         max_value_id = [id for id in cell_voltages if cell_voltages[id] == max_value][0]
         avg_value = round(sum(values) / len(values), 3)
+        diff_value = round(max_value - min_value, 3)
         cell_voltages['voltage_min'] = min_value
         cell_voltages['voltage_min_cell'] = min_value_id
         cell_voltages['voltage_max'] = max_value
         cell_voltages['voltage_max_cell'] = max_value_id
         cell_voltages['voltage_avg'] = avg_value
-        cell_voltages['voltage_diff'] = max_value - min_value
+        cell_voltages['voltage_diff'] = diff_value
 
         return cell_voltages
 
