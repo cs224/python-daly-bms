@@ -292,9 +292,9 @@ class DalyBMS:
 
         values = [*cell_voltages.values()]
         min_value = min(values)
-        min_value_id = [id for id, v in cell_voltages if v == min_value][0]
+        min_value_id = [id for id in cell_voltages if cell_voltages[id] == min_value][0]
         max_value = max(values)
-        max_value_id = [id for id, v in cell_voltages if v == max_value][0]
+        max_value_id = [id for id in cell_voltages if cell_voltages[id] == max_value][0]
         avg_value = sum(values) / len(values)
         cell_voltages['min_voltage'] = min_value
         cell_voltages['min_voltage_cell'] = min_value_id
