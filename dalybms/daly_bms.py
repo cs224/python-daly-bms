@@ -289,6 +289,19 @@ class DalyBMS:
         cell_voltages = self._split_frames(response_data=response_data, status_field="cells", structure=">b 3h x")
         for id in cell_voltages:
             cell_voltages[id] = cell_voltages[id] / 1000
+
+        values = [*cell_voltages.values()]
+        min_value = min(values)
+        min_value_id = [id for id, v in cell_voltages if v == min_value][0]
+        max_value = max(values)
+        max_value_id = [id for id, v in cell_voltages if v == max_value][0]
+        avg_value = sum(values) / len(values)
+        cell_voltages['min_voltage'] = min_value
+        cell_voltages['min_voltage_cell'] = min_value_id
+        cell_voltages['max_voltage'] = max_value
+        cell_voltages['min_voltage_cell'] = max_value_id
+        cell_voltages['avg_voltage'] = avg_value
+
         return cell_voltages
 
     def get_temperatures(self, response_data=None):
