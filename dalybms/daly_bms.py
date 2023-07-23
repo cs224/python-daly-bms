@@ -299,7 +299,7 @@ class DalyBMS:
         cell_voltages['min_voltage'] = min_value
         cell_voltages['min_voltage_cell'] = min_value_id
         cell_voltages['max_voltage'] = max_value
-        cell_voltages['min_voltage_cell'] = max_value_id
+        cell_voltages['max_voltage_cell'] = max_value_id
         cell_voltages['avg_voltage'] = avg_value
 
         return cell_voltages
