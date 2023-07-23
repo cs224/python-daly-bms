@@ -92,6 +92,8 @@ parser.add_argument("--soc", help="show voltage, current, SOC", action="store_tr
 parser.add_argument("--mosfet", help="show mosfet status", action="store_true")
 parser.add_argument("--cell-voltages", help="show cell voltages", action="store_true")
 parser.add_argument("--temperatures", help="show temperature sensor values", action="store_true")
+parser.add_argument("--min-max-temperatures", help="show min and max temperature sensor values", action="store_true")
+parser.add_argument("--cell-voltage-range", help="show cell voltage range", action="store_true")
 parser.add_argument("--balancing", help="show cell balancing status", action="store_true")
 parser.add_argument("--errors", help="show BMS errors", action="store_true")
 parser.add_argument("--all", help="show all", action="store_true")
@@ -280,7 +282,15 @@ while True:
             result = asyncio.run(bms.get_cell_voltages())
             print_result(result)
     if args.temperatures:
-        result = asyncio.run(bms.get_temperatures())
+        if not args.status:
+            asyncio.run(bms.get_status())
+            result = asyncio.run(bms.get_temperatures())
+            print_result(result)
+    if args.min_max_temperatures:
+        result = asyncio.run(bms.get_max_min_temperature())
+        print_result(result)
+    if args.cell_voltage_range:
+        result = asyncio.run(bms.get_cell_voltage_range())
         print_result(result)
     if args.balancing:
         result = asyncio.run(bms.get_balancing_status())
