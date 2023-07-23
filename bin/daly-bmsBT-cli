@@ -299,8 +299,10 @@ while True:
         result = asyncio.run(bms.get_errors())
         print_result(result)
     if args.all:
-        result = asyncio.run(bms.get_all())
-        print_result(result)
+        if not args.status:
+            asyncio.run(bms.get_status())
+            result = asyncio.run(bms.get_all())
+            print_result(result)
 
     if args.check:
         status = asyncio.run(bms.get_status())

@@ -184,7 +184,7 @@ class DalyBMSBluetooth(DalyBMS):
     async def get_all(self):
         if not self.status:
             await self.get_status()
-            
+
         return {
             "status": await self.get_status(),
             "soc": await self.get_soc(),
