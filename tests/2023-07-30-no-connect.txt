@@ -1,0 +1,21 @@
+root@raspberrypi4:/home/pi# cat /tmp/dalybt-service-out.txt
+Traceback (most recent call last):
+  File "/usr/local/bin/daly-bmsBT-cli", line 7, in <module>
+    exec(compile(f.read(), __file__, 'exec'))
+  File "/home/pi/workspaces/python-daly-bms/bin/daly-bmsBT-cli", line 305, in <module>
+    asyncio.run(bms.get_status())
+  File "/usr/lib/python3.9/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/usr/lib/python3.9/asyncio/base_events.py", line 642, in run_until_complete
+    return future.result()
+  File "/home/pi/workspaces/python-daly-bms/bin/daly-bmsBT-cli", line 30, in get_status
+    await self.connect()
+  File "/home/pi/workspaces/python-daly-bms/bin/daly-bmsBT-cli", line 16, in connect
+    self.connected = await self.bt_bms.connect(mac_address=self.mac_address)
+  File "/home/pi/workspaces/python-daly-bms/dalybms/daly_bms_bluetooth.py", line 48, in connect
+    await self.client.connect()
+  File "/usr/local/lib/python3.9/dist-packages/bleak/__init__.py", line 531, in connect
+    return await self._backend.connect(**kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/bleak/backends/bluezdbus/client.py", line 135, in connect
+    raise BleakDeviceNotFoundError(
+bleak.exc.BleakDeviceNotFoundError: Device with address C7:7C:03:01:06:71 was not found.
