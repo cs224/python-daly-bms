@@ -152,7 +152,7 @@ class DalyBMS:
             "current": (parts[2] - 30000) / 10,  # negative=charging, positive=discharging
             "soc_percent": parts[3] / 10
         }
-        data['power'] = data['total_voltage'] * data['current']
+        data['power'] = round(data['total_voltage'] * data['current'], 1)
         return data
 
     def get_cell_voltage_range(self, response_data=None):
