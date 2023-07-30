@@ -16,6 +16,18 @@ Integrated changes from:
     Balancer:
     > daly-bmsBT-cli --all -d C7:7C:03:04:0F:D9
 
+systemd:
+
+    > systemctl daemon-reload
+    > systemctl start dalybt.service
+    > cat /tmp/dalybt-service-out.txt
+    > journalctl -S today -u dalybt.service -f
+    > systemctl status dalybt.service
+    > systemctl enable --now dalybt.timer
+    > systemctl list-timers --all
+    > systemctl status dalybt.timer
+
+
 ## Compatibility
 
 There are two different types of devices sold under the Daly Brand, which use different communication protocols.

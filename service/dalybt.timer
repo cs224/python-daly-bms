@@ -1,0 +1,16 @@
+# systemd unit file for the DALY Bluetooth Service timer
+#
+# needs to go to /etc/systemd/system/*
+
+[Unit]
+Description=Daly Bluetooth Service timer
+
+[Timer]
+Unit=dalybt.service
+# Every Minute : https://opensource.com/article/20/7/systemd-timers
+OnCalendar=*-*-* *:*:00,30
+Persistent=true
+AccuracySec=1us
+
+[Install]
+WantedBy=timers.target
